@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowDownRight, Asterisk, MoveDown } from "lucide-react";
+import { ArrowDownRight, Asterisk } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import HeroVideo from "@/components/HeroVideo";
 import type { SiteCopy } from "@/lib/content";
@@ -86,13 +86,6 @@ export default function HeroSection({ copy }: HeroSectionProps) {
         </motion.div>
       </div>
 
-      <div className="hero-footerline" aria-hidden="true">
-        <span>01 / KINETIC PARTICLE LAB</span>
-        <span className="hero-scroll-copy">
-          {copy.scroll} <MoveDown size={13} />
-        </span>
-        <span>MOTION / NEXT.JS</span>
-      </div>
     </section>
   );
 }

@@ -173,11 +173,6 @@ export default function Portfolio() {
         </motion.div>
       </section>
 
-      <footer className="site-footer">
-        <span>{copy.footer.copyright}</span>
-        <span>{copy.footer.note}</span>
-        <span>{copy.footer.localTime}</span>
-      </footer>
     </main>
   );
 }

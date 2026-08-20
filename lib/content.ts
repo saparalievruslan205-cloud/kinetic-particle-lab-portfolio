@@ -66,11 +66,6 @@ export interface SiteCopy {
     action: string;
     email: string;
   };
-  footer: {
-    note: string;
-    localTime: string;
-    copyright: string;
-  };
 }
 
 const sharedSkills: SkillContent[] = [
@@ -212,11 +207,6 @@ export const content: Record<Locale, SiteCopy> = {
       action: "Начать разговор",
       email: "hello@kineticlab.dev",
     },
-    footer: {
-      note: "Спроектировано и собрано как живая система.",
-      localTime: "BISHKEK / UTC+6",
-      copyright: "KINETIC//LAB © 2026",
-    },
   },
   en: {
     nav: {
@@ -340,11 +330,6 @@ export const content: Record<Locale, SiteCopy> = {
         "Tell me what you want people to feel, do or change. We'll find its technological form together.",
       action: "Start a conversation",
       email: "hello@kineticlab.dev",
-    },
-    footer: {
-      note: "Designed and engineered as a living system.",
-      localTime: "BISHKEK / UTC+6",
-      copyright: "KINETIC//LAB © 2026",
     },
   },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ConnectionInfo {
   effectiveType?: string;
@@ -28,6 +28,7 @@ function canPlayHeroVideo() {
 
 export default function HeroVideo() {
   const [isEnabled, setIsEnabled] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -48,10 +49,45 @@ export default function HeroVideo() {
     };
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!isEnabled || !video || typeof document === "undefined") {
+      return;
+    }
+
+    let isInViewport = true;
+    const syncPlayback = () => {
+      if (isInViewport && document.visibilityState === "visible") {
+        void video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isInViewport = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: 0.01 },
+    );
+
+    observer.observe(video);
+    document.addEventListener("visibilitychange", syncPlayback);
+    syncPlayback();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [isEnabled]);
+
   return (
     <div className="hero-video-background" aria-hidden="true">
       {isEnabled ? (
         <video
+          ref={videoRef}
           className="hero-video"
           autoPlay
           loop

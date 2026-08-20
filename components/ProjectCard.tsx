@@ -213,7 +213,7 @@ export default function ProjectCard({
       aria-labelledby={titleId}
     >
       <motion.div
-        className="project-card__surface group relative min-h-[29rem] overflow-hidden rounded-2xl border border-slate-200/80 bg-white/70 shadow-xl shadow-slate-200/50 backdrop-blur-xl sm:min-h-[32rem]"
+        className="project-card__surface group relative min-h-[29rem] overflow-hidden rounded-2xl border border-white/15 bg-[#121323]/75 shadow-xl shadow-black/30 backdrop-blur-xl sm:min-h-[32rem]"
         style={{
           rotateX: prefersReducedMotion ? 0 : rotateX,
           rotateY: prefersReducedMotion ? 0 : rotateY,
@@ -256,7 +256,7 @@ export default function ProjectCard({
         ) : null}
 
         <a
-          className="project-card__link relative z-10 flex min-h-[inherit] flex-col p-6 outline-none focus-visible:ring-2 focus-visible:ring-[var(--project-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f8fafc] sm:p-8"
+          className="project-card__link relative z-10 flex min-h-[inherit] flex-col p-6 outline-none focus-visible:ring-2 focus-visible:ring-[var(--project-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[#090914] sm:p-8"
           href={href}
           aria-label={`${actionLabel}: ${project.title}`}
           data-cursor="project"
@@ -265,7 +265,7 @@ export default function ProjectCard({
           onPointerDown={triggerBorderSweep}
         >
           <div className="project-card__topline flex items-start justify-between gap-5">
-            <span className="font-mono text-[0.68rem] tracking-[0.2em] text-slate-500">
+            <span className="font-mono text-[0.68rem] tracking-[0.2em] text-slate-300">
               {project.index} / SELECTED WORK
             </span>
             <span
@@ -280,12 +280,12 @@ export default function ProjectCard({
               {project.subtitle}
             </p>
             <h3
-              className="max-w-[10ch] text-4xl font-semibold leading-[0.92] tracking-[-0.055em] text-slate-900 sm:text-5xl"
+              className="max-w-[10ch] text-4xl font-semibold leading-[0.92] tracking-[-0.055em] text-white sm:text-5xl"
               id={titleId}
             >
               {project.title}
             </h3>
-            <p className="mt-5 max-w-xl text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
+            <p className="mt-5 max-w-xl text-sm leading-6 text-slate-300 sm:text-base sm:leading-7">
               {project.description}
             </p>
 
@@ -296,7 +296,7 @@ export default function ProjectCard({
               {project.tags.map((tag) => (
                 <li
                   key={tag}
-                  className="rounded-full border border-slate-200 bg-white/60 px-3 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-slate-600"
+                  className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-slate-200"
                 >
                   {tag}
                 </li>
@@ -304,17 +304,17 @@ export default function ProjectCard({
             </ul>
           </div>
 
-          <div className="project-card__footer mt-9 flex items-end justify-between gap-5 border-t border-slate-200/80 pt-5 [transform:translateZ(24px)]">
+          <div className="project-card__footer mt-9 flex items-end justify-between gap-5 border-t border-white/15 pt-5 [transform:translateZ(24px)]">
             <div>
-              <strong className="block text-2xl font-medium tracking-[-0.04em] text-slate-900">
+              <strong className="block text-2xl font-medium tracking-[-0.04em] text-white">
                 {project.metric}
               </strong>
-              <span className="mt-1 block text-[0.62rem] uppercase tracking-[0.16em] text-slate-500">
+              <span className="mt-1 block text-[0.62rem] uppercase tracking-[0.16em] text-slate-400">
                 {project.metricLabel}
               </span>
             </div>
 
-            <span className="project-card__cta inline-flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-600 transition-colors group-hover:text-slate-950">
+            <span className="project-card__cta inline-flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-300 transition-colors group-hover:text-white">
               {actionLabel}
               <ArrowUpRight
                 className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

@@ -117,9 +117,9 @@ export function MagneticButton({
       aria-label={ariaLabel}
       className={twMerge(
         clsx(
-          'group relative isolate inline-flex touch-manipulation items-center justify-center rounded-full border border-white/15 bg-white/[0.055] px-6 py-3 text-sm font-semibold tracking-[0.08em] text-white backdrop-blur-xl',
-          'transition-[border-color,background-color,box-shadow] duration-300 hover:border-[#00f0ff]/55 hover:bg-[#00f0ff]/10 hover:shadow-[0_0_32px_rgba(0,240,255,0.2)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f0ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050508]',
+          'group relative isolate inline-flex touch-manipulation items-center justify-center rounded-full border border-slate-200/80 bg-white/70 px-6 py-3 text-sm font-semibold tracking-[0.08em] text-slate-800 backdrop-blur-xl',
+          'transition-[border-color,background-color,box-shadow] duration-300 hover:border-[#06b6d4]/55 hover:bg-cyan-50/70 hover:shadow-[0_0_32px_rgba(6,182,212,0.14)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#06b6d4] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8fafc]',
           className,
         ),
       )}

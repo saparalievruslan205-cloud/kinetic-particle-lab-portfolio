@@ -1,15 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDownRight, Asterisk, MoveDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import type { SiteCopy } from "@/lib/content";
-
-const HeroCanvas = dynamic(() => import("@/components/HeroCanvas"), {
-  ssr: false,
-  loading: () => <div className="canvas-fallback" aria-hidden="true" />,
-});
 
 interface HeroSectionProps {
   copy: SiteCopy["hero"];
@@ -43,7 +37,6 @@ export default function HeroSection({ copy }: HeroSectionProps) {
 
   return (
     <section className="hero-section" id="top" aria-labelledby="hero-title">
-      <HeroCanvas />
       <div className="hero-grid" aria-hidden="true" />
       <div className="hero-orb-label" aria-hidden="true">
         <span>{copy.objectLabel}</span>

@@ -171,7 +171,7 @@ function SkillOrb({
     <motion.button
       ref={buttonRef}
       type="button"
-      className="skills-cloud__item relative min-h-28 touch-manipulation rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left text-white shadow-[0_20px_55px_rgba(0,0,0,0.25)] outline-none backdrop-blur-xl focus-visible:ring-2 focus-visible:ring-[#00f0ff] focus-visible:ring-offset-4 focus-visible:ring-offset-[#050508] sm:min-h-32 sm:p-5"
+      className="skills-cloud__item relative min-h-28 touch-manipulation rounded-2xl border border-slate-200/80 bg-white/70 p-4 text-left text-slate-900 shadow-xl shadow-slate-200/50 outline-none backdrop-blur-xl focus-visible:ring-2 focus-visible:ring-[#06b6d4] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f8fafc] sm:min-h-32 sm:p-5"
       aria-label={`${skill.name}: ${skill.category}`}
       title={`${skill.name} — ${skill.category}`}
       data-cursor="skill"
@@ -230,7 +230,7 @@ function SkillOrb({
         />
 
         <span
-          className="skills-cloud__icon inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-black/25"
+          className="skills-cloud__icon inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white/70"
           style={{ color: accent, boxShadow: `0 0 24px ${accent}24` }}
           aria-hidden="true"
         >
@@ -238,10 +238,10 @@ function SkillOrb({
         </span>
 
         <span className="mt-6 block">
-          <strong className="block text-sm font-medium tracking-[-0.02em] text-white sm:text-base">
+          <strong className="block text-sm font-medium tracking-[-0.02em] text-slate-900 sm:text-base">
             {skill.name}
           </strong>
-          <span className="mt-1 block font-mono text-[0.58rem] uppercase tracking-[0.15em] text-white/38 sm:text-[0.62rem]">
+          <span className="mt-1 block font-mono text-[0.58rem] uppercase tracking-[0.15em] text-slate-500 sm:text-[0.62rem]">
             {skill.category}
           </span>
         </span>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, CircleDot, MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
@@ -8,7 +7,7 @@ import MagneticButton from "@/components/MagneticButton";
 import ProjectCard from "@/components/ProjectCard";
 import SiteHeader from "@/components/SiteHeader";
 import SkillsCloud from "@/components/SkillsCloud";
-import { content, type Locale } from "@/lib/content";
+import { content } from "@/lib/content";
 
 const reveal = {
   hidden: { opacity: 0, y: 32 },
@@ -16,15 +15,8 @@ const reveal = {
 };
 
 export default function Portfolio() {
-  const [locale, setLocale] = useState<Locale>("ru");
   const reduceMotion = useReducedMotion();
-  const copy = content[locale];
-
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = locale;
-    }
-  }, [locale]);
+  const copy = content;
 
   const viewportAnimation = reduceMotion
     ? undefined
@@ -32,7 +24,7 @@ export default function Portfolio() {
 
   return (
     <main className="site-shell">
-      <SiteHeader locale={locale} setLocale={setLocale} nav={copy.nav} />
+      <SiteHeader nav={copy.nav} />
       <HeroSection copy={copy.hero} />
 
       <section className="content-section work-section" id="works" aria-labelledby="work-title">
@@ -56,7 +48,7 @@ export default function Portfolio() {
         <div className="project-grid">
           {copy.projects.map((project, index) => (
             <ProjectCard
-              key={`${locale}-${project.id}`}
+              key={project.id}
               project={project}
               featured={index === 0 || index === 3}
               actionLabel={copy.work.cardAction}

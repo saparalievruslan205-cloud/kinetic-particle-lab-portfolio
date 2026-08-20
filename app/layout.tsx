@@ -6,7 +6,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import "./globals.css";
 
 const manrope = Manrope({
-  subsets: ["cyrillic", "latin"],
+  subsets: ["latin"],
   variable: "--font-manrope",
   display: "swap",
 });
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s — KINETIC//LAB",
   },
   description:
-    "Иммерсивные интерфейсы, real-time графика и full-stack продукты — immersive interfaces, real-time graphics and digital systems.",
+    "Immersive interfaces, real-time graphics and full-stack products where code, movement and light become one system.",
   keywords: [
     "Creative Technologist",
     "Fullstack Developer",
@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ru" className={manrope.variable}>
+    <html lang="en" className={manrope.variable}>
       <body>
         <SmoothScroll>
           <ClientRuntime />

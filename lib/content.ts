@@ -1,5 +1,3 @@
-export type Locale = "ru" | "en";
-
 export interface ProjectContent {
   id: string;
   index: string;
@@ -25,7 +23,6 @@ export interface SiteCopy {
     stack: string;
     contact: string;
     availability: string;
-    languageLabel: string;
   };
   hero: {
     eyebrow: string;
@@ -83,139 +80,13 @@ const sharedSkills: SkillContent[] = [
   { name: "Creative Direction", category: "Concept", icon: "aperture" },
 ];
 
-export const content: Record<Locale, SiteCopy> = {
-  ru: {
-    nav: {
-      work: "Работы",
-      lab: "Подход",
-      stack: "Стек",
-      contact: "Контакт",
-      availability: "Доступен для проектов",
-      languageLabel: "Выбор языка",
-    },
-    hero: {
-      eyebrow: "Creative Technologist · Fullstack Developer",
-      lineOne: "ЦИФРОВЫЕ МИРЫ",
-      lineTwo: "В ДВИЖЕНИИ",
-      body:
-        "Создаю выразительные интерфейсы, real-time графику и технологичные продукты на пересечении кода, движения и света.",
-      primary: "Смотреть проекты",
-      secondary: "Обсудить идею",
-      scroll: "Листайте, чтобы исследовать",
-    objectLabel: "Перламутровый motion loop",
-    },
-    work: {
-      kicker: "01 / Избранные работы",
-      title: "СИСТЕМЫ, КОТОРЫЕ ЧУВСТВУЮТСЯ ЖИВЫМИ",
-      body:
-        "Четыре демонстрационных кейса — от пространственного commerce до генеративной айдентики. Каждый соединяет продуктовую ясность и кинетический характер.",
-      cardAction: "Открыть кейс",
-    },
-    projects: [
-      {
-        id: "neon-atlas",
-        index: "01",
-        title: "NEON ATLAS",
-        subtitle: "Пространственная commerce-платформа",
-        description:
-          "Иммерсивный каталог, где продукты существуют как интерактивные объекты, а интерфейс реагирует на темп исследования.",
-        tags: ["Next.js", "WebGL", "AI Search"],
-        accent: "cyan",
-        metric: "+38%",
-        metricLabel: "вовлечение",
-      },
-      {
-        id: "aether-os",
-        index: "02",
-        title: "AETHER OS",
-        subtitle: "Realtime observability workspace",
-        description:
-          "Живая карта распределённых систем превращает сложные сигналы в понятную пространственную картину.",
-        tags: ["R3F", "WebSockets", "Node.js"],
-        accent: "violet",
-        metric: "12ms",
-        metricLabel: "data latency",
-      },
-      {
-        id: "flux-archive",
-        index: "03",
-        title: "FLUX ARCHIVE",
-        subtitle: "Кинетический культурный архив",
-        description:
-          "Редакционная система с типографикой, которая меняет плотность и ритм вместе с историей пользователя.",
-        tags: ["Motion", "Headless CMS", "TypeScript"],
-        accent: "silver",
-        metric: "2.1×",
-        metricLabel: "глубина сессии",
-      },
-      {
-        id: "pulse-01",
-        index: "04",
-        title: "PULSE / 01",
-        subtitle: "Генеративная аудио-айдентика",
-        description:
-          "Визуальный организм, синхронизированный с музыкой: от обложек и лайв-сцены до WebAudio-инструмента.",
-        tags: ["GLSL", "WebAudio", "Creative Code"],
-        accent: "acid",
-        metric: "60fps",
-        metricLabel: "live render",
-      },
-    ],
-    lab: {
-      kicker: "02 / Как я работаю",
-      title: "НЕ ДЕКОРИРУЮ. СОБИРАЮ ПОВЕДЕНИЕ.",
-      lead:
-        "Сильный digital-опыт появляется, когда концепция, код и производительность проектируются как одна система.",
-      body:
-        "Я двигаюсь от ощущения к прототипу, от прототипа к устойчивой архитектуре — сохраняя характер идеи на каждом техническом слое.",
-      principles: [
-        {
-          number: "A",
-          title: "Сначала ощущение",
-          body: "Формулирую движение, свет и реакцию интерфейса до того, как выбираю инструмент.",
-        },
-        {
-          number: "B",
-          title: "Прототип как доказательство",
-          body: "Проверяю сложные взаимодействия в real-time, пока решения ещё легко менять.",
-        },
-        {
-          number: "C",
-          title: "Код как материал",
-          body: "Собираю production-систему, где красота не конфликтует со скоростью и доступностью.",
-        },
-      ],
-      metrics: [
-        { value: "60", label: "целевых FPS" },
-        { value: "12+", label: "дисциплин в одном процессе" },
-        { value: "01", label: "цельная система" },
-      ],
-    },
-    stack: {
-      kicker: "03 / Инструменты",
-      title: "СТЕК ДЛЯ ИДЕЙ, КОТОРЫЕ НЕЛЬЗЯ СОБРАТЬ ШАБЛОНОМ",
-      body:
-        "От шейдеров и motion-систем до API и устойчивого frontend — выбираю технологию по поведению продукта, а не по моде.",
-      hint: "Наведите курсор или коснитесь навыка",
-    },
-    skills: sharedSkills,
-    contact: {
-      kicker: "04 / Следующий эксперимент",
-      title: "ЕСТЬ ИДЕЯ, КОТОРАЯ ДОЛЖНА ДВИГАТЬСЯ?",
-      body:
-        "Расскажите, что вы хотите заставить чувствовать, делать или менять. Найдём технологическую форму вместе.",
-      action: "Начать разговор",
-      email: "hello@kineticlab.dev",
-    },
-  },
-  en: {
+export const content: SiteCopy = {
     nav: {
       work: "Work",
       lab: "Approach",
       stack: "Stack",
       contact: "Contact",
       availability: "Available for projects",
-      languageLabel: "Select language",
     },
     hero: {
       eyebrow: "Creative Technologist · Fullstack Developer",
@@ -331,5 +202,4 @@ export const content: Record<Locale, SiteCopy> = {
       action: "Start a conversation",
       email: "hello@kineticlab.dev",
     },
-  },
 };

@@ -1,15 +1,12 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
-import type { Locale, SiteCopy } from "@/lib/content";
+import type { SiteCopy } from "@/lib/content";
 
 interface SiteHeaderProps {
-  locale: Locale;
-  setLocale: Dispatch<SetStateAction<Locale>>;
   nav: SiteCopy["nav"];
 }
 
-export default function SiteHeader({ locale, setLocale, nav }: SiteHeaderProps) {
+export default function SiteHeader({ nav }: SiteHeaderProps) {
   const links = [
     { href: "#works", label: nav.work },
     { href: "#lab", label: nav.lab },
@@ -35,20 +32,6 @@ export default function SiteHeader({ locale, setLocale, nav }: SiteHeaderProps) 
         <div className="availability-badge">
           <span aria-hidden="true" />
           <span className="availability-copy">{nav.availability}</span>
-        </div>
-        <div className="locale-switch" role="group" aria-label={nav.languageLabel}>
-          {(["ru", "en"] as const).map((language) => (
-            <button
-              key={language}
-              type="button"
-              aria-pressed={locale === language}
-              className={locale === language ? "is-active" : undefined}
-              onClick={() => setLocale(language)}
-              data-cursor="button"
-            >
-              {language.toUpperCase()}
-            </button>
-          ))}
         </div>
       </div>
     </header>

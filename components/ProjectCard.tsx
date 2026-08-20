@@ -83,8 +83,8 @@ export default function ProjectCard({
   const articleRef = useRef<HTMLElement>(null);
   const isCoarse = useCoarsePointer();
   const prefersReducedMotion = useReducedMotion() === true;
-  const [isInMobileFocus, setIsInMobileFocus] = useState(false);
   const [sweepKey, setSweepKey] = useState(0);
+  const shouldAnimate = !isCoarse && !prefersReducedMotion;
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -108,45 +108,14 @@ export default function ProjectCard({
   }, [highlightX, highlightY, pointerX, pointerY]);
 
   useEffect(() => {
-    if (!isCoarse || prefersReducedMotion) {
-      return;
-    }
-
-    if (typeof window === "undefined" || !articleRef.current) {
-      return;
-    }
-
-    if (!("IntersectionObserver" in window)) {
-      return;
-    }
-
-    const article = articleRef.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInMobileFocus(
-          entry.isIntersecting && entry.intersectionRatio >= 0.45,
-        );
-      },
-      {
-        threshold: [0, 0.45, 0.7, 1],
-        rootMargin: "-8% 0px -8% 0px",
-      },
-    );
-
-    observer.observe(article);
-
-    return () => observer.disconnect();
-  }, [isCoarse, prefersReducedMotion]);
-
-  useEffect(() => {
-    if (isCoarse || prefersReducedMotion) {
+    if (!shouldAnimate) {
       resetTilt();
     }
-  }, [isCoarse, prefersReducedMotion, resetTilt]);
+  }, [resetTilt, shouldAnimate]);
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLAnchorElement>) => {
-      if (isCoarse || prefersReducedMotion || !articleRef.current) {
+      if (!shouldAnimate || !articleRef.current) {
         return;
       }
 
@@ -162,15 +131,16 @@ export default function ProjectCard({
     [
       highlightX,
       highlightY,
-      isCoarse,
       pointerX,
       pointerY,
-      prefersReducedMotion,
+      shouldAnimate,
     ],
   );
 
   const triggerBorderSweep = useCallback(() => {
-    setSweepKey((currentKey) => currentKey + 1);
+    if (shouldAnimate) {
+      setSweepKey((currentKey) => currentKey + 1);
+    }
 
     if (
       isCoarse &&
@@ -179,7 +149,7 @@ export default function ProjectCard({
     ) {
       navigator.vibrate(12);
     }
-  }, [isCoarse]);
+  }, [isCoarse, shouldAnimate]);
 
   const resolvedAccent =
     PROJECT_ACCENTS[project.accent.trim().toLowerCase()] ?? project.accent;
@@ -199,15 +169,11 @@ export default function ProjectCard({
   };
 
   const titleId = `project-${project.id}-title`;
-  const showMobileFocus = isCoarse && !prefersReducedMotion && isInMobileFocus;
-
   return (
     <article
       ref={articleRef}
       className={`project-card relative [perspective:1200px] ${
         featured ? "project-card--featured lg:col-span-2" : ""
-      } ${
-        showMobileFocus ? "project-card--active" : ""
       }`}
       style={accentStyle}
       aria-labelledby={titleId}
@@ -215,21 +181,20 @@ export default function ProjectCard({
       <motion.div
         className="project-card__surface group relative min-h-[29rem] overflow-hidden rounded-2xl border border-white/15 bg-[#121323]/75 shadow-xl shadow-black/30 backdrop-blur-xl sm:min-h-[32rem]"
         style={{
-          rotateX: prefersReducedMotion ? 0 : rotateX,
-          rotateY: prefersReducedMotion ? 0 : rotateY,
+          rotateX: shouldAnimate ? rotateX : 0,
+          rotateY: shouldAnimate ? rotateY : 0,
           transformPerspective: 1200,
           transformStyle: "preserve-3d",
-          willChange: prefersReducedMotion ? "auto" : "transform",
+          willChange: shouldAnimate ? "transform" : "auto",
         }}
         animate={{
-          scale:
-            showMobileFocus ? 1.02 : 1,
+          scale: 1,
         }}
         whileHover={
-          !isCoarse && !prefersReducedMotion ? { scale: 1.012 } : undefined
+          shouldAnimate ? { scale: 1.012 } : undefined
         }
         whileTap={
-          isCoarse && !prefersReducedMotion ? { scale: 1.02 } : undefined
+          undefined
         }
         transition={{ type: "spring", stiffness: 220, damping: 25 }}
       >

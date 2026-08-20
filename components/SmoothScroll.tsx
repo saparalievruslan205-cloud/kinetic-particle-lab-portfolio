@@ -37,8 +37,22 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       animationFrame = window.requestAnimationFrame(frame)
     }
 
+    const canUseSmoothScroll = () => {
+      const navigatorWithHints = navigator as Navigator & {
+        connection?: { effectiveType?: string; saveData?: boolean }
+        deviceMemory?: number
+      }
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+      const lowMemory = (navigatorWithHints.deviceMemory ?? 8) <= 4
+      const lowCpu = (navigator.hardwareConcurrency ?? 8) <= 4
+      const connection = navigatorWithHints.connection
+      const slowNetwork = connection?.saveData || /2g|3g/.test(connection?.effectiveType ?? '')
+
+      return finePointer && !reducedMotionQuery.matches && !lowMemory && !lowCpu && !slowNetwork
+    }
+
     const start = () => {
-      if (lenis || reducedMotionQuery.matches) return
+      if (lenis || !canUseSmoothScroll()) return
 
       lenis = new Lenis({
         anchors: true,
@@ -48,10 +62,6 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
         overscroll: true,
         respectReducedMotion: true,
         smoothWheel: true,
-        syncTouch: true,
-        syncTouchLerp: 0.075,
-        touchInertiaExponent: 1.75,
-        touchMultiplier: 1.05,
         wheelMultiplier: 0.9,
       })
 
@@ -59,7 +69,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     }
 
     const handleMotionPreference = () => {
-      if (reducedMotionQuery.matches) {
+      if (!canUseSmoothScroll()) {
         stop()
       } else {
         start()

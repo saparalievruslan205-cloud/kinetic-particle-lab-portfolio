@@ -158,14 +158,7 @@ function SkillOrb({
   }, [offsetX, offsetY, register, registrationKey, targetGlow, targetScale]);
 
   const Icon = SKILL_ICONS[skill.icon.trim().toLowerCase()] ?? Asterisk;
-  const direction = index % 2 === 0 ? 1 : -1;
-  const floatX = direction * (7 + ((index * 5) % 11));
-  const floatY = -8 - ((index * 7) % 15);
-  const floatDuration = 4.8 + (index % 5) * 0.72;
-  const impulseX = direction * (14 + (index % 3) * 4);
-  const impulseY = -11 - (index % 4) * 3;
   const accent = index % 3 === 1 ? "#7000ff" : "#00f0ff";
-  const shouldFloat = isCoarse && !prefersReducedMotion;
 
   return (
     <motion.button
@@ -175,41 +168,14 @@ function SkillOrb({
       aria-label={`${skill.name}: ${skill.category}`}
       title={`${skill.name} — ${skill.category}`}
       data-cursor="skill"
-      animate={
-        shouldFloat
-          ? {
-              x: [0, floatX, -floatX * 0.55, 0],
-              y: [0, floatY, -floatY * 0.35, 0],
-              rotate: [0, direction * 1.8, direction * -1.1, 0],
-            }
-          : { x: 0, y: 0, rotate: 0 }
-      }
+      animate={{ x: 0, y: 0, rotate: 0 }}
       whileTap={
-        shouldFloat
-          ? {
-              x: impulseX,
-              y: impulseY,
-              rotate: direction * 4,
-              scale: 1.06,
-              transition: { type: "spring", stiffness: 360, damping: 18 },
-            }
-          : prefersReducedMotion
-            ? undefined
-            : { scale: 1.03 }
+        prefersReducedMotion ? undefined : { scale: 1.02 }
       }
-      transition={
-        shouldFloat
-          ? {
-              duration: floatDuration,
-              delay: index * 0.07,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }
-          : { duration: 0.22, ease: "easeOut" }
-      }
+      transition={{ duration: 0.18, ease: "easeOut" }}
       style={{
         WebkitTapHighlightColor: "transparent",
-        willChange: shouldFloat ? "transform" : "auto",
+        willChange: "auto",
       }}
     >
       <motion.span

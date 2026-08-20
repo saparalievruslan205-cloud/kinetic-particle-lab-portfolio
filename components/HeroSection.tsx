@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDownRight, Asterisk, MoveDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
+import HeroVideo from "@/components/HeroVideo";
 import type { SiteCopy } from "@/lib/content";
 
 interface HeroSectionProps {
@@ -37,6 +38,7 @@ export default function HeroSection({ copy }: HeroSectionProps) {
 
   return (
     <section className="hero-section" id="top" aria-labelledby="hero-title">
+      <HeroVideo />
       <div className="hero-grid" aria-hidden="true" />
       <div className="hero-orb-label" aria-hidden="true">
         <span>{copy.objectLabel}</span>
@@ -89,7 +91,7 @@ export default function HeroSection({ copy }: HeroSectionProps) {
         <span className="hero-scroll-copy">
           {copy.scroll} <MoveDown size={13} />
         </span>
-        <span>WEBGL / NEXT.JS</span>
+        <span>MOTION / NEXT.JS</span>
       </div>
     </section>
   );

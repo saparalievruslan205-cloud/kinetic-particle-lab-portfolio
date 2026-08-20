@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, CircleDot, MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
@@ -10,11 +9,6 @@ import ProjectCard from "@/components/ProjectCard";
 import SiteHeader from "@/components/SiteHeader";
 import SkillsCloud from "@/components/SkillsCloud";
 import { content, type Locale } from "@/lib/content";
-
-const HeroCanvas = dynamic(() => import("@/components/HeroCanvas"), {
-  ssr: false,
-  loading: () => <div className="canvas-fallback" aria-hidden="true" />,
-});
 
 const reveal = {
   hidden: { opacity: 0, y: 32 },
@@ -38,7 +32,6 @@ export default function Portfolio() {
 
   return (
     <main className="site-shell">
-      <HeroCanvas />
       <SiteHeader locale={locale} setLocale={setLocale} nav={copy.nav} />
       <HeroSection copy={copy.hero} />
 

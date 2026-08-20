@@ -40,8 +40,10 @@ function createSeededRandom(seed: number) {
 
 function createRibbonGeometry() {
   const segments = 180
-  const positions = new Float32Array((segments + 1) * 2 * 3)
-  const uvs = new Float32Array((segments + 1) * 2 * 2)
+  const widthSegments = 10
+  const columns = widthSegments + 1
+  const positions = new Float32Array((segments + 1) * columns * 3)
+  const uvs = new Float32Array((segments + 1) * columns * 2)
   const indices: number[] = []
   const pointAt = (t: number) => new THREE.Vector3(
     Math.sin(t) * 1.58,
@@ -56,16 +58,23 @@ function createRibbonGeometry() {
     const ahead = pointAt(t + 0.012)
     const tangent = ahead.sub(center).normalize()
     const side = new THREE.Vector3(-tangent.y, tangent.x, 0).normalize()
-    const width = 0.18 + Math.sin(progress * Math.PI) * 0.13
-    const left = center.clone().addScaledVector(side, width)
-    const right = center.clone().addScaledVector(side, -width)
-    const offset = index * 6
-    positions.set([left.x, left.y, left.z, right.x, right.y, right.z], offset)
-    uvs.set([progress, 0, progress, 1], index * 4)
+    const width = 0.22 + Math.sin(progress * Math.PI) * 0.18
+    for (let widthIndex = 0; widthIndex <= widthSegments; widthIndex += 1) {
+      const lateral = THREE.MathUtils.lerp(-1, 1, widthIndex / widthSegments)
+      const centerWeight = 1 - lateral * lateral
+      const point = center.clone().addScaledVector(side, width * lateral)
+      // A subtle crown turns the ribbon from a flat strip into a soft liquid membrane.
+      point.z += centerWeight * (0.055 + Math.sin(progress * Math.PI * 3) * 0.035)
+      const vertexIndex = index * columns + widthIndex
+      positions.set([point.x, point.y, point.z], vertexIndex * 3)
+      uvs.set([progress, widthIndex / widthSegments], vertexIndex * 2)
+    }
 
     if (index < segments) {
-      const base = index * 2
-      indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2)
+      for (let widthIndex = 0; widthIndex < widthSegments; widthIndex += 1) {
+        const base = index * columns + widthIndex
+        indices.push(base, base + columns, base + 1, base + 1, base + columns, base + columns + 1)
+      }
     }
   }
 
@@ -76,6 +85,7 @@ function createRibbonGeometry() {
   geometry.computeVertexNormals()
   geometry.userData.basePositions = positions.slice()
   geometry.userData.segments = segments
+  geometry.userData.widthSegments = widthSegments
   return geometry
 }
 
@@ -111,21 +121,25 @@ function LiquidChrome({ interaction, preferences, scrollProgress }: LiquidChrome
     const position = ribbonGeometry.getAttribute('position') as THREE.BufferAttribute
     const basePositions = ribbonGeometry.userData.basePositions as Float32Array
     const segments = ribbonGeometry.userData.segments as number
+    const widthSegments = ribbonGeometry.userData.widthSegments as number
+    const columns = widthSegments + 1
     const positions = position.array as Float32Array
-    const flow = elapsed * (isTouching ? 2.2 : 1.15)
-    const amplitude = input.reducedMotion ? 0.035 : 0.19 + path.distort * 0.16
+    const flow = elapsed * (isTouching ? 2.6 : 1.32)
+    const amplitude = input.reducedMotion ? 0.035 : 0.22 + path.distort * 0.2
     for (let index = 0; index <= segments; index += 1) {
       const progress = index / segments
       const wave = Math.sin(progress * Math.PI * 5.4 - flow)
       const ripple = Math.cos(progress * Math.PI * 9.2 + flow * 0.72)
       const touchWarp = isTouching ? pointerX * (progress - 0.5) * 0.18 : 0
 
-      for (let edge = 0; edge < 2; edge += 1) {
-        const offset = (index * 2 + edge) * 3
-        const edgeBias = edge === 0 ? 1 : -1
-        positions[offset] = basePositions[offset] + ripple * amplitude * 0.25 + touchWarp
-        positions[offset + 1] = basePositions[offset + 1] + wave * amplitude + pointerY * 0.05 * motionScale
-        positions[offset + 2] = basePositions[offset + 2] + ripple * amplitude * edgeBias * 0.58 + wave * 0.07
+      for (let widthIndex = 0; widthIndex <= widthSegments; widthIndex += 1) {
+        const lateral = THREE.MathUtils.lerp(-1, 1, widthIndex / widthSegments)
+        const centerWeight = 1 - lateral * lateral
+        const crossWave = Math.sin(progress * Math.PI * 7.5 - flow * 1.36 + lateral * 3.4)
+        const offset = (index * columns + widthIndex) * 3
+        positions[offset] = basePositions[offset] + ripple * amplitude * (0.16 + centerWeight * 0.17) + touchWarp
+        positions[offset + 1] = basePositions[offset + 1] + wave * amplitude * (0.74 + centerWeight * 0.3) + pointerY * 0.05 * motionScale
+        positions[offset + 2] = basePositions[offset + 2] + (ripple * 0.12 + crossWave * 0.17) * amplitude * (0.3 + centerWeight * 0.9) + wave * 0.08
       }
     }
     position.needsUpdate = true

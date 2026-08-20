@@ -74,6 +74,8 @@ function createRibbonGeometry() {
   geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2))
   geometry.setIndex(indices)
   geometry.computeVertexNormals()
+  geometry.userData.basePositions = positions.slice()
+  geometry.userData.segments = segments
   return geometry
 }
 
@@ -105,8 +107,31 @@ function LiquidChrome({ interaction, preferences, scrollProgress }: LiquidChrome
     const scaleTarget = (preferences.coarse ? 0.8 : 1) * path.scale * (1 + ambient * 0.027 * motionScale + (isTouching ? 0.03 : 0)); const scale = damp(group.scale.x, scaleTarget, 4.6, delta); group.scale.setScalar(scale)
     material.iridescence = damp(material.iridescence, 0.5 + path.distort * 0.74 + (isTouching ? 0.15 : 0) + ambient * 0.09, 5, delta)
     material.roughness = damp(material.roughness, 0.16 + path.distort * 0.14, 5, delta)
+
+    const position = ribbonGeometry.getAttribute('position') as THREE.BufferAttribute
+    const basePositions = ribbonGeometry.userData.basePositions as Float32Array
+    const segments = ribbonGeometry.userData.segments as number
+    const positions = position.array as Float32Array
+    const flow = elapsed * (isTouching ? 2.2 : 1.15)
+    const amplitude = input.reducedMotion ? 0.035 : 0.19 + path.distort * 0.16
+    for (let index = 0; index <= segments; index += 1) {
+      const progress = index / segments
+      const wave = Math.sin(progress * Math.PI * 5.4 - flow)
+      const ripple = Math.cos(progress * Math.PI * 9.2 + flow * 0.72)
+      const touchWarp = isTouching ? pointerX * (progress - 0.5) * 0.18 : 0
+
+      for (let edge = 0; edge < 2; edge += 1) {
+        const offset = (index * 2 + edge) * 3
+        const edgeBias = edge === 0 ? 1 : -1
+        positions[offset] = basePositions[offset] + ripple * amplitude * 0.25 + touchWarp
+        positions[offset + 1] = basePositions[offset + 1] + wave * amplitude + pointerY * 0.05 * motionScale
+        positions[offset + 2] = basePositions[offset + 2] + ripple * amplitude * edgeBias * 0.58 + wave * 0.07
+      }
+    }
+    position.needsUpdate = true
+    ribbonGeometry.computeVertexNormals()
   })
-  return <group ref={groupRef} rotation={[0.1, 0.18, 0]}><mesh geometry={ribbonGeometry}><meshPhysicalMaterial ref={materialRef} clearcoat={1} clearcoatRoughness={0.08} color="#dffcff" envMapIntensity={2.4} iridescence={0.7} iridescenceIOR={1.28} metalness={0.48} roughness={0.2} side={THREE.DoubleSide} /></mesh></group>
+  return <group ref={groupRef} rotation={[0.1, 0.18, 0]}><mesh geometry={ribbonGeometry}><meshPhysicalMaterial ref={materialRef} clearcoat={1} clearcoatRoughness={0.08} color="#e6fdff" envMapIntensity={2.4} iridescence={0.7} iridescenceIOR={1.28} metalness={0.3} roughness={0.2} side={THREE.DoubleSide} thickness={0.22} transmission={0.12} /></mesh></group>
 }
 
 function Scene({ interaction, preferences, scrollProgress }: LiquidChromeProps) {

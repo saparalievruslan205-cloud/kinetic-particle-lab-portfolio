@@ -107,7 +107,7 @@ export const content: Record<Locale, SiteCopy> = {
       primary: "Смотреть проекты",
       secondary: "Обсудить идею",
       scroll: "Листайте, чтобы исследовать",
-      objectLabel: "Интерактивный liquid chrome объект",
+      objectLabel: "Интерактивная перламутровая лента",
     },
     work: {
       kicker: "01 / Избранные работы",
@@ -236,7 +236,7 @@ export const content: Record<Locale, SiteCopy> = {
       primary: "View projects",
       secondary: "Discuss an idea",
       scroll: "Scroll to explore",
-      objectLabel: "Interactive liquid chrome object",
+      objectLabel: "Interactive pearlescent ribbon",
     },
     work: {
       kicker: "01 / Selected work",

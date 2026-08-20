@@ -1,9 +1,9 @@
 'use client'
 
-import { Environment, Lightformer, MeshDistortMaterial } from '@react-three/drei'
+import { Environment, Lightformer } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useMotionValueEvent, useScroll } from 'framer-motion'
-import { type ComponentRef, type MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { type MutableRefObject, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 type InteractionState = { active: boolean; coarse: boolean; pointerId: number | null; reducedMotion: boolean; x: number; y: number }
@@ -11,8 +11,6 @@ type MotionPreferences = Pick<InteractionState, 'coarse' | 'reducedMotion'>
 type LiquidChromeProps = { interaction: MutableRefObject<InteractionState>; preferences: MotionPreferences; scrollProgress: MutableRefObject<number> }
 
 const INITIAL_INTERACTION: InteractionState = { active: false, coarse: false, pointerId: null, reducedMotion: false, x: 0, y: 0 }
-// Icosahedron detail is recursive: 20 × 4^detail faces. Detail 5 preserves high-DPR performance.
-const LIQUID_MESH_DETAIL = 5
 const trajectory = [
   { at: 0, x: 0, y: 0, scale: 1.08, rx: 0, ry: 0, rz: 0, distort: 0.16 },
   { at: 0.26, x: 1.62, y: 0.08, scale: 0.78, rx: 0.08, ry: 1.05, rz: -0.08, distort: 0.24 },
@@ -40,6 +38,45 @@ function createSeededRandom(seed: number) {
   return () => { value += 0x6d2b79f5; let result = value; result = Math.imul(result ^ (result >>> 15), result | 1); result ^= result + Math.imul(result ^ (result >>> 7), result | 61); return ((result ^ (result >>> 14)) >>> 0) / 4294967296 }
 }
 
+function createRibbonGeometry() {
+  const segments = 180
+  const positions = new Float32Array((segments + 1) * 2 * 3)
+  const uvs = new Float32Array((segments + 1) * 2 * 2)
+  const indices: number[] = []
+  const pointAt = (t: number) => new THREE.Vector3(
+    Math.sin(t) * 1.58,
+    Math.sin(t * 2.15) * 0.42,
+    Math.cos(t * 1.35) * 0.62,
+  )
+
+  for (let index = 0; index <= segments; index += 1) {
+    const progress = index / segments
+    const t = THREE.MathUtils.lerp(-Math.PI * 1.14, Math.PI * 1.14, progress)
+    const center = pointAt(t)
+    const ahead = pointAt(t + 0.012)
+    const tangent = ahead.sub(center).normalize()
+    const side = new THREE.Vector3(-tangent.y, tangent.x, 0).normalize()
+    const width = 0.18 + Math.sin(progress * Math.PI) * 0.13
+    const left = center.clone().addScaledVector(side, width)
+    const right = center.clone().addScaledVector(side, -width)
+    const offset = index * 6
+    positions.set([left.x, left.y, left.z, right.x, right.y, right.z], offset)
+    uvs.set([progress, 0, progress, 1], index * 4)
+
+    if (index < segments) {
+      const base = index * 2
+      indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2)
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2))
+  geometry.setIndex(indices)
+  geometry.computeVertexNormals()
+  return geometry
+}
+
 function Atmosphere({ coarse, reducedMotion }: MotionPreferences) {
   const pointsRef = useRef<THREE.Points | null>(null)
   const positions = useMemo(() => {
@@ -53,8 +90,9 @@ function Atmosphere({ coarse, reducedMotion }: MotionPreferences) {
 
 function LiquidChrome({ interaction, preferences, scrollProgress }: LiquidChromeProps) {
   const groupRef = useRef<THREE.Group | null>(null)
-  const materialRef = useRef<ComponentRef<typeof MeshDistortMaterial> | null>(null)
+  const materialRef = useRef<THREE.MeshPhysicalMaterial | null>(null)
   const smoothedPointer = useRef(new THREE.Vector2())
+  const ribbonGeometry = useMemo(() => createRibbonGeometry(), [])
   useFrame((state, delta) => {
     const group = groupRef.current; const material = materialRef.current
     if (!group || !material) return
@@ -65,9 +103,10 @@ function LiquidChrome({ interaction, preferences, scrollProgress }: LiquidChrome
     group.position.x = damp(group.position.x, path.x + pointerX * (isTouching ? 0.3 : 0.08), 4.6, delta); group.position.y = damp(group.position.y, path.y + mobileScrollLift + pointerY * (isTouching ? 0.26 : 0.06), 4.6, delta)
     group.rotation.x = damp(group.rotation.x, path.rx - pointerY * 0.25 * motionScale + ambient * 0.045, 4.4, delta); group.rotation.y = damp(group.rotation.y, path.ry + pointerX * 0.36 * motionScale + elapsed * 0.05, 4.2, delta); group.rotation.z = damp(group.rotation.z, path.rz + pointerX * pointerY * 0.08 + ambient * 0.02, 4, delta)
     const scaleTarget = (preferences.coarse ? 0.8 : 1) * path.scale * (1 + ambient * 0.027 * motionScale + (isTouching ? 0.03 : 0)); const scale = damp(group.scale.x, scaleTarget, 4.6, delta); group.scale.setScalar(scale)
-    material.distort = damp(material.distort, path.distort + (isTouching ? (Math.abs(pointerX) + Math.abs(pointerY)) * 0.08 : 0) + ambient * 0.04, 5, delta)
+    material.iridescence = damp(material.iridescence, 0.5 + path.distort * 0.74 + (isTouching ? 0.15 : 0) + ambient * 0.09, 5, delta)
+    material.roughness = damp(material.roughness, 0.16 + path.distort * 0.14, 5, delta)
   })
-  return <group ref={groupRef}><mesh><icosahedronGeometry args={[1.8, LIQUID_MESH_DETAIL]} /><MeshDistortMaterial ref={materialRef} clearcoat={1} clearcoatRoughness={0.06} color="#eefcff" distort={0.2} envMapIntensity={2.2} metalness={0.92} radius={1} roughness={0.13} speed={preferences.reducedMotion ? 0.1 : 0.85} /></mesh></group>
+  return <group ref={groupRef} rotation={[0.1, 0.18, 0]}><mesh geometry={ribbonGeometry}><meshPhysicalMaterial ref={materialRef} clearcoat={1} clearcoatRoughness={0.08} color="#dffcff" envMapIntensity={2.4} iridescence={0.7} iridescenceIOR={1.28} metalness={0.48} roughness={0.2} side={THREE.DoubleSide} /></mesh></group>
 }
 
 function Scene({ interaction, preferences, scrollProgress }: LiquidChromeProps) {

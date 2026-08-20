@@ -40,11 +40,6 @@ export default function HeroSection({ copy }: HeroSectionProps) {
     <section className="hero-section" id="top" aria-labelledby="hero-title">
       <HeroVideo />
       <div className="hero-grid" aria-hidden="true" />
-      <div className="hero-orb-label" aria-hidden="true">
-        <span>{copy.objectLabel}</span>
-        <span>POINTER / TOUCH</span>
-      </div>
-
       <div className="hero-content">
         <motion.div
           className="hero-eyebrow"
